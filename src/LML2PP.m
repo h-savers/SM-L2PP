@@ -125,7 +125,8 @@ column(find(column <=0))=1 ; % problem with easeconv
 row(find(row <= 0))=1 ; % problem with easeconv
 Map_Reflectivity =accumarray([column row],10.^(DDMSNRAtPeakSingleDDM/10), [], @mean) ;
 Map_Reflectivity(find(Map_Reflectivity ==0))=NaN ; 
-figure, imagesc(10*log10(Map_Reflectivity)')
+figure, imagesc(10*log10(Map_Reflectivity)') ;
+disp(' ') ; 
 % pippo=lccs_class(74000:76000, 40000:41000) ;
 % pippo_lon=lon(74000:76000) ;
 % pippo_lat=lat(40000:41000) ;
