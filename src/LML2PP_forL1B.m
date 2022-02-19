@@ -4,13 +4,14 @@ clear all
 % [dayinit, timeresolution, spaceresolution]=GUI
 % get defaults and directories of input L1B products and L2 output
 load('./conf/Configuration.mat') ;
-% Path_HydroGNSS_Data = uigetdir(Path_HydroGNSS_Data, 'Select input L1B data folder') ; 
-% Path_HydroGNSS_ProcessedData=uigetdir(Path_HydroGNSS_ProcessedData, 'Select output data folder') ;
-% Path_Auxiliary=uigetdir(Path_Auxiliary, 'Select Auxiliary files folder') ;
-metadata_name='metadata_L1_merged.nc' ; 
-Path_HydroGNSS_Data = uigetdir('./', 'Select input L1B data folder') ; 
-Path_HydroGNSS_ProcessedData=uigetdir('./', 'Select output data folder') ;
-Path_Auxiliary=uigetdir('./', 'Select Auxiliary files folder') ;
+Path_HydroGNSS_Data = uigetdir(Path_HydroGNSS_Data, 'Select input L1B data folder') ; 
+Path_HydroGNSS_ProcessedData=uigetdir(Path_HydroGNSS_ProcessedData, 'Select output data folder') ;
+Path_Auxiliary=uigetdir(Path_Auxiliary, 'Select Auxiliary files folder') ;
+% metadata_name='metadata_L1_merged.nc' ; 
+metadata_name='metadata.nc' ;
+% Path_HydroGNSS_Data = uigetdir('./', 'Select input L1B data folder') ; 
+% Path_HydroGNSS_ProcessedData=uigetdir('./', 'Select output data folder') ;
+% Path_Auxiliary=uigetdir('./', 'Select Auxiliary files folder') ;
 
 save('./conf/Configuration.mat', 'Path_HydroGNSS_Data', 'Path_HydroGNSS_ProcessedData',...
     'Path_Auxiliary', 'metadata_name', '-append') ;
@@ -20,7 +21,7 @@ save('./conf/Configuration.mat', 'Path_HydroGNSS_Data', 'Path_HydroGNSS_Processe
 Year=2010;
 Month=9 ; 
 Day=9 ; 
-init_SM_Day=datetime(2010, 9, 9) ; 
+init_SM_Day=datetime(2010, 9, 10) ; 
 SM_Time_resolution= 1 ;
 % DOY_Num=[213:1:365];
 % DOY_Num=DOY_Num.' ; 
@@ -116,7 +117,7 @@ infometa=ncinfo([Path_L1B_day,'\',char(Dir_Day(jj)),'\',metadata_name]) ;
 % NumberOfFrequencies=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\',metadata_name], 'NumberOfFrequencies') ; 
 
 % loop on Groups (i.e., tracks) within each 6-hours segment 
-%  Num_Groups=5 ; 
+% Num_Groups=5 ; 
 for kk=1:Num_Groups ; 
 % IntegrationMidPointTime=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name'], ['/',...
 %     infometa.Groups(1).Name,'/IntegrationMidPointTime']) ; 
