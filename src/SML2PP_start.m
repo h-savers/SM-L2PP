@@ -2,14 +2,14 @@ function SML2PP_start(mode, Path_HydroGNSS_Data,Path_HydroGNSS_ProcessedData,...
     year, month, day, SM_Time_resolution,Resolution, Frequency, Polarization)
 
 %clear all
-plotTag='Yes' 
+plotTag='Yes' ; 
 % a=1 ; 
 if mode=="-input"
     disp('Command input mode') 
-if exist('Path_HydroGNSS_Data')==0 & exists('Path_HydroGNSS_ProcessedData')==0 &...
-        exist('year')==0 & exists('month')==0 & exists('day')==0 &...
-        exists('SM_Time_resolution')==0 & exists('Resolution')==0 &...
-        exists('Frequency')==0 & exists('Polarization')==0 
+if exist('Path_HydroGNSS_Data')==0 & exist('Path_HydroGNSS_ProcessedData')==0 &...
+        exist('year')==0 & exist('month')==0 & exist('day')==0 &...
+        exist('SM_Time_resolution')==0 & exist('Resolution')==0 &...
+        exist('Frequency')==0 & exist('Polarization')==0 
     disp('MISSING INPUTS. Program exiting') ; 
     return ;
 end
@@ -74,7 +74,7 @@ save('./conf/Configuration.mat', 'Answer', '-append') ;
 
 % ***** get defaults and directories of input L1B products and L2 output
 Path_HydroGNSS_Data = uigetdir(Path_HydroGNSS_Data, 'Select input L1B data folder') ; 
-Path_HydroGNSS_ProcessedData=uigetdir(Path_HydroGNSS_ProcessedData, 'Select output data folder') ;
+Path_HydroGNSS_ProcessedData=uigetdir(Path_HydroGNSS_ProcessedData, 'Select output L2 data folder') ;
 Path_Auxiliary=uigetdir(Path_Auxiliary, 'Select Auxiliary files folder') ;
 % ***** get defaults and directories of input L1B products and L2 output
 %
@@ -91,7 +91,7 @@ save('./conf/Configuration.mat', 'Path_HydroGNSS_Data', 'Path_HydroGNSS_Processe
 %
 SM_main(init_SM_Day,SM_Time_resolution, Path_HydroGNSS_Data,Path_Auxiliary,...
      Path_HydroGNSS_ProcessedData,Resolution, metadata_name, DDMs_name, ...
-     readDDM, Frequency, Polarization, plotTag)
+     readDDM, Frequency, Polarization, plotTag) ; 
 %
 % *************  Run the main program
 else

@@ -242,7 +242,7 @@ OutputProduct.Grid_SPlat=Grid_SPlat ;
 OutputProduct.Grid_SPlon=Grid_SPlon ; 
 %
 Outfilename=['HydroGNSS_SM_' char(init_SM_Day) '_' char(init_SM_Day+SM_Time_resolution-1) '_' OutputProduct.Version '.nc'] ; 
-OutputProduct.Filename=Outfilename
+OutputProduct.Filename=Outfilename ; 
 %
 Outdirectory=[Path_HydroGNSS_ProcessedData '\' OutputProduct.DataID] ; 
 %
@@ -261,7 +261,8 @@ c.Limits=[cmin cmax] ;
 %
 % ****************   Write output L2 product
 %
-mkdir(Outdirectory) ; 
+warning('off') ; 
+status= mkdir(Outdirectory) ; 
 save([Outdirectory '\' Outfilename], 'OutputProduct')
 %
 % ****************   Write output L2 product
