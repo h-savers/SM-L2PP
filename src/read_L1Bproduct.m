@@ -1,5 +1,5 @@
 
-function [ReflectionCoefficientAtSP, Sigma0]=read_L1Bproduct(init_SM_Day,...
+function [ReflectionCoefficientAtSP, Sigma0, DataTag]=read_L1Bproduct(init_SM_Day,...
     SM_Time_resolution, Path_HydroGNSS_Data, metadata_name, readDDM, DDMs_name) ; 
 
 % ***********  loop on number of days to process for a single map
@@ -19,7 +19,7 @@ disp(['Reading Year=', num2str(Year), ' Month=', num2str(Month), ' Day=', num2st
 
 % create string array with all 6-hours segments within one day 
 Dir_Day=[] ; 
-DataTag=[] ; 
+% DataTag=[] ; 
 for jj=3:Num_sixhours+2 ; 
         Dir_Day= [Dir_Day ; D(jj).name];
 end

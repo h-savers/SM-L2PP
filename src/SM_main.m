@@ -5,7 +5,7 @@ function SM_main(init_SM_Day,SM_Time_resolution, Path_HydroGNSS_Data,Path_Auxili
 tic
 %
 % ***** read algorithms coefficients
-load('../conf/Coefficients.mat')
+load('./conf/Coefficients.mat')
 % ***** read algorithms coefficients
 %
 % ***** Initialize variables
@@ -44,7 +44,7 @@ DDM=[] ;
 % ***** Initialize variables
 %
 % ***********  read L1B data
- [ReflectionCoefficientAtSP, Sigma0]=read_L1Bproduct(init_SM_Day,...
+ [ReflectionCoefficientAtSP, Sigma0, DataTag]=read_L1Bproduct(init_SM_Day,...
      SM_Time_resolution, Path_HydroGNSS_Data, metadata_name, readDDM, DDMs_name) ; 
 % ***********  read L1B data
 %
@@ -195,11 +195,19 @@ Grid_SM=Grid_SM(colmin-1: colmax+1, rowmin-1:rowmax+1) ;
 %
 % ****************   Create structure to write output L2 product
 %
+% Check id DataTag is uique, otherwise exit with error message 
+DataTagUnique   =unique(DataTag) ; 
+[a b]=size(DataTagUnique) ; 
+DataTagUnique=replace(DataTagUnique, [':'], ['-']) ; 
+DataTagUnique=replace(DataTagUnique, [' '], ['_']) ;
+DataTagUnique=replace(DataTagUnique, ['/'], ['\']) ;
+if b>1 , disp('Data Tag is not unique and the data come from different esperiments. Program exiting'), end 
+%
 NumRetrievals=size(goodreflections) ; 
 % Global 
 OutputProduct.Name='HydroGNSS Soil Moisture' ; 
 % Global attribute 
-OutputProduct.DataID='DataID' ; % Data Tag
+OutputProduct.DataID=['SM-L2_' date] ; % Data Tag
 OutputProduct.Software='Soil Moil Algorithm from ReflecTometry (SMART)' ;
 OutputProduct.Version='v0' ; 
 OutputProduct.Licence='Sapienza University of Rome' ;
@@ -211,8 +219,8 @@ OutputProduct.FinalTimeOfData=char(char(init_SM_Day+SM_Time_resolution-1)) ; % t
 % Global Dimensions
 OutputProduct.SM_Time_resolution=SM_Time_resolution ; % NumberOfDays
 OutputProduct.NumRetrievals=NumRetrievals ; % NumberOfPoint
-OutputProduct.GridColumns=colmax-colmin+2  ; 
-OutputProduct.GridrowsNumRetrievals=rowmax-rowmin+2 ; 
+OutputProduct.GridColumns=colmax-colmin+3  ; 
+OutputProduct.Gridrows=rowmax-rowmin+3 ; 
 % Global variables 
 OutputProduct.Resolution=Resolution ; % Attribute: unit: 'km' description: 'Size of observables aggregation area 
 OutputProduct.PointTime=PointTime(goodreflections) ; % Attribute: unit: 'days since 0000-01-01 00:00:00 time of observation'
@@ -234,7 +242,7 @@ OutputProduct.Grid_SPlat=Grid_SPlat ;
 OutputProduct.Grid_SPlon=Grid_SPlon ; 
 %
 Outfilename=['HydroGNSS_SM_' char(init_SM_Day) '_' char(init_SM_Day+SM_Time_resolution-1) '_' OutputProduct.Version '.nc'] ; 
-OutputProduct.Filename=Outfilename ; 
+OutputProduct.Filename=Outfilename
 %
 Outdirectory=[Path_HydroGNSS_ProcessedData '\' OutputProduct.DataID] ; 
 %
@@ -246,7 +254,7 @@ title(['Soil moisture map [%]'] );
 c=colorbar ; 
 c.Label.String = 'Soil Moisture [%]'; 
 cmin=min(Grid_SM(:)) ; cmax=max(Grid_SM(:)) ; 
-cmin=round(cmin-1) ; cmax=roud(cmax+1) ; 
+cmin=round(cmin-1) ; cmax=round(cmax+1) ; 
 c.Limits=[cmin cmax] ; 
 %
 % ****************   Create structure to write output L2 product

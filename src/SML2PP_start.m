@@ -13,7 +13,7 @@ if exist('Path_HydroGNSS_Data')==0 & exists('Path_HydroGNSS_ProcessedData')==0 &
     disp('MISSING INPUTS. Program exiting') ; 
     return ;
 end
-load('../conf/Configuration2.mat') ;
+load('./conf/Configuration2.mat') ;
 init_SM_Day=datetime(str2num(year), str2num(month), str2num(day)) ;
 SM_Time_resolution=str2num(SM_Time_resolution) ; 
 Resolution=str2num(Resolution) ; 
@@ -29,7 +29,7 @@ SM_main(init_SM_Day,SM_Time_resolution, Path_HydroGNSS_Data,Path_Auxiliary,...
 elseif mode=="-GUI" 
     disp('GUI mode')
 % *************  Start GUI 
-load('../conf/Configuration.mat') ;
+load('./conf/Configuration.mat') ;
 global coe ; 
 % ****** get inputs from GUI
 prompt={'Metadata file name: ',...
@@ -60,7 +60,7 @@ Polarization=Answer{10} ;
 % ****** get inputs from GUI
 %
 % ****** Save GUI input into Input Configuration File 
-save('../conf/Configuration.mat', 'Answer', '-append') ;
+save('./conf/Configuration.mat', 'Answer', '-append') ;
 % ****** Save GUI input into Input Configration File 
 %
 % readDDM='Yes' ;  
@@ -83,7 +83,7 @@ Path_Auxiliary=uigetdir(Path_Auxiliary, 'Select Auxiliary files folder') ;
 % Path_Auxiliary=uigetdir('./', 'Select Auxiliary files folder') ;
 
 % save defaults and directories  
-save('../conf/Configuration.mat', 'Path_HydroGNSS_Data', 'Path_HydroGNSS_ProcessedData',...
+save('./conf/Configuration.mat', 'Path_HydroGNSS_Data', 'Path_HydroGNSS_ProcessedData',...
     'Path_Auxiliary', 'metadata_name', 'readDDM', '-append') ;
 % save defaults and directories  
 %
