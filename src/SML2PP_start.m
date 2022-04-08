@@ -1,5 +1,5 @@
 function SML2PP_start(mode, Path_HydroGNSS_Data,Path_HydroGNSS_ProcessedData,...
-    year, month, day, SM_Time_resolution,Resolution, Frequency, Polarization)
+    Path_Auxiliary, year, month, day, SM_Time_resolution,Resolution, Frequency, Polarization)
 
 %clear all
 plotTag='Yes' ; 
@@ -10,8 +10,15 @@ if exist('Path_HydroGNSS_Data')==0 & exist('Path_HydroGNSS_ProcessedData')==0 &.
         exist('year')==0 & exist('month')==0 & exist('day')==0 &...
         exist('SM_Time_resolution')==0 & exist('Resolution')==0 &...
         exist('Frequency')==0 & exist('Polarization')==0 
-    disp('MISSING INPUTS. Program exiting') ; 
+    disp('ERROR: MISSING INPUTS. Program exiting') ; 
     return ;
+elseif (Frequency ~= "L1" & Frequency ~= "L5" & Frequency ~= "E1" & Frequency ~= "E5") |...
+        (Polarization ~= "L" & Polarization ~= "R" & Polarization ~= "dual") ;
+        disp('ERROR: WRONG INPUT. Program exiting') ; 
+    return
+elseif isfolder(Path_HydroGNSS_Data) ==0 | isfolder(Path_HydroGNSS_ProcessedData) ==0 
+    disp('ERROR: FOLDER DOES NOT EXIST. Program exiting') ; 
+    return 
 end
 load('./conf/Configuration2.mat') ;
 init_SM_Day=datetime(str2num(year), str2num(month), str2num(day)) ;

@@ -198,10 +198,14 @@ Grid_SM=Grid_SM(colmin-1: colmax+1, rowmin-1:rowmax+1) ;
 % Check id DataTag is uique, otherwise exit with error message 
 DataTagUnique   =unique(DataTag) ; 
 [a b]=size(DataTagUnique) ; 
-DataTagUnique=replace(DataTagUnique, [':'], ['-']) ; 
-DataTagUnique=replace(DataTagUnique, [' '], ['_']) ;
-DataTagUnique=replace(DataTagUnique, ['/'], ['\']) ;
-if b>1 , disp('Data Tag is not unique and the data come from different esperiments. Program exiting'), end 
+% DataTagUnique=replace(DataTagUnique, [':'], ['-']) ; 
+% DataTagUnique=replace(DataTagUnique, [' '], ['_']) ;
+% DataTagUnique=replace(DataTagUnique, ['/'], ['\']) ;
+if b>1 
+    disp('WARNING: data Tag is not unique and the data come from different esperiments. Program exiting'), 
+    return
+else disp(['Data Tag -- ' char(DataTagUnique) ' -- is unique']) ;
+end
 %
 NumRetrievals=size(goodreflections) ; 
 % Global 
@@ -259,7 +263,7 @@ c.Limits=[cmin cmax] ;
 %
 % ****************   Create structure to write output L2 product
 %
-% ****************   Write output L2 product
+;% ****************   Write output L2 product
 %
 warning('off') ; 
 status= mkdir(Outdirectory) ; 
@@ -267,16 +271,6 @@ save([Outdirectory '\' Outfilename], 'OutputProduct')
 %
 % ****************   Write output L2 product
 % 
-% % Map_Reflectivity(find(Map_Reflectivity ==0))=NaN ; 
-% % figure, imagesc(10*log10(Map_Reflectivity)')
-% save('workspace.mat') ; 
-% figure, imagesc(10*log10(Map_Reflectivity)')
-% 
-% % ************ Reading the Auxiliary data
-% [DEM_elevation_EASE, DEM_rmsheight_EASE25, DEM_rmsslope_EASE,...
-%     DEM_slope_EASE, lccs_class_EASE]=reading_Auxiliary(Resolution, Path_Auxiliary) ; 
-% % ************ 
-
 end % end the main function
 
 
