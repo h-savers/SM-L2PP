@@ -126,6 +126,7 @@ PointTime=Map_Reflectivity_dB  ;
 NumIntegratedSP=Map_Reflectivity_dB ;
 SPlat=Map_Reflectivity_dB  ; 
 SPlon=Map_Reflectivity_dB  ; 
+RadiometricResolution=Map_Reflectivity_dB ; 
 [column,row] = easeconv_m(SpecularPointLat,SpecularPointLon, "low");
 column(find(column <=0))=1 ; % problem with easeconv
 row(find(row <= 0))=1 ; % problem with easeconv
@@ -232,8 +233,8 @@ OutputProduct.UTCTime=UTCPointTime(goodreflections) ; % Attribute: unit: 'UTC' d
 OutputProduct.SPlatitude=SPlat(goodreflections) ; % Attribute: unit: 'deg' description: 'mean longitude of observables'
 OutputProduct.SPlongitude=SPlon(goodreflections) ; % Attribute: unit: 'deg' description: 'mean latitude of observables'
 OutputProduct.SM=SM ; % Attribute: unit: '100*m^3/m^3 or %' description: 'surface volumetric soil moisture'
-OutputProduct.NumIntegratedSP=NumIntegratedSP ; % Attribute: integer description: 'number of aggregates observation in the ares'
-OutputProduct.Uncertainty=RadiometricResolution ; 
+OutputProduct.NumIntegratedSP=NumIntegratedSP(goodreflections)  ; % Attribute: integer description: 'number of aggregates observation in the ares'
+OutputProduct.Uncertainty=RadiometricResolution(goodreflections)  ; 
 OutputProduct.Quality=zeros(NumRetrievals) ; % Attribute: unit '8 bits' description '8 Quality flags' 
 OutputProduct.Map_Reflectivity=Map_Reflectivity_dB(goodreflections) ;  % Attribute: unit: 'dB' description 'mean L1B reflectivity in the aggregation area'
 OutputProduct.agb_class_EASE25=agb_class_EASE25(goodreflections) ;  % Attribute: unit: 'ton' description 'mean CCI agb in the aggregation area'
