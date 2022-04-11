@@ -264,12 +264,11 @@ c.Limits=[cmin cmax] ;
 %
 % ****************   Create structure to write output L2 product
 %
-% ****************   Write output L2 product
+;% ****************   Write output L2 product
 %
 warning('off') ; 
 status= mkdir(Outdirectory) ; 
-soil= WritingNetcdf(OutputProduct,Outdirectory ) ; 
-% save([Outdirectory '\' Outfilename], 'OutputProduct')
+save([Outdirectory '\' Outfilename], 'OutputProduct')
 %
 % ****************   Write output L2 product
 % 
