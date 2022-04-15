@@ -120,6 +120,11 @@ end
 % *********   Create map of mean observables in an EASE grid reference 
 if Resolution==25, ngrid_x=1388; ngrid_y=584; else disp('Wrong resolution'), end
 %    
+[a b]=size(IntegrationMidPointTime)
+if b==0 disp('ERROR: DATA NOT FOUND IN THE AREA. Program exiting') ; 
+    return ;
+end
+%
 Map_Reflectivity_dB=nan(ngrid_x, ngrid_y) ;  
 Map_Reflectivity_linear=Map_Reflectivity_dB  ;
 PointTime=Map_Reflectivity_dB  ; 
@@ -267,6 +272,8 @@ c.Limits=[cmin cmax] ;
 % ****************   Write output L2 product
 %
 warning('off') ; 
+TT=clock ; 
+if exist([Outdirectory '\' Outfilename])==2, Outdirectory=[Outdirectory '_' num2str((TT(4))) '_' num2str((TT(5))) ] ; 
 status= mkdir(Outdirectory) ; 
 soil= WritingNetcdf(OutputProduct,Outdirectory ) ; 
 % save([Outdirectory '\' Outfilename], 'OutputProduct')

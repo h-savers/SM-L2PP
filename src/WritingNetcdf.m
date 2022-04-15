@@ -34,9 +34,11 @@ AboveGroundBiomass=OutputProduct.agb_class_EASE25;
 DEM_elevation=OutputProduct.DEM_elevation_EASE25;
 Signal=repmat(string(OutputProduct.Signal),size(MeanObservationTime));
 
-
-% ncid = netcdf.create(FileName,'NETCDF4');
-ncid = netcdf.create([Outdirectory '\' FileName],'NETCDF4');
+ cmode = netcdf.getConstant('NETCDF4');
+%  cmode = bitor(cmode,netcdf.getConstant('CLOBBER')); % WARNING
+%  combination of CLOBBER and NETCDF4 does not succeed
+ncid = netcdf.create([Outdirectory '\' FileName],cmode);
+% ncid = netcdf.create([Outdirectory '\' FileName],'NETCDF4');
 
 
 

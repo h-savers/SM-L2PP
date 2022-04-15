@@ -1,7 +1,9 @@
 
 function [ReflectionCoefficientAtSP, Sigma0, DataTag]=read_L1Bproduct(init_SM_Day,...
     SM_Time_resolution, Path_HydroGNSS_Data, metadata_name, readDDM, DDMs_name) ; 
-
+%
+Track_ID=0 ; % ID of the track written in the output structure
+%
 % ***********  loop on number of days to process for a single map
 formatSpec='%02u' ; 
 for j=1: SM_Time_resolution ; 
@@ -59,48 +61,49 @@ disp(['Reading Six-hour ', num2str(jj), ' of ', num2str(Num_sixhours), ' - Group
 [a NumberOfChannels]=size(infometa.Groups(kk).Groups) ; 
 
 if NumberOfChannels > 0   
-% Case of HydroGNSS with several channels. Read specular point data    
-ReflectionCoefficientAtSP(kk).Name=['Track n. ', num2str(kk)] ; 
-ReflectionCoefficientAtSP(kk).PRN=infometa.Groups(kk).Attributes(8).Value  ; 
+% Case of HydroGNSS with several channels. Read specular point data   
+Track_ID=Track_ID+1 ; 
+ReflectionCoefficientAtSP(Track_ID).Name=['Track n. ', num2str(Track_ID)] ; 
+ReflectionCoefficientAtSP(Track_ID).PRN=infometa.Groups(kk).Attributes(8).Value  ; 
 
 varIdTime = netcdf.inqVarID(trackNcids(kk), 'IntegrationMidPointTime');
 read=netcdf.getVar(trackNcids(kk), varIdTime);
 
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name, '/IntegrationMidPointTime']) ; 
-ReflectionCoefficientAtSP(kk).time=read ; 
+ReflectionCoefficientAtSP(Track_ID).time=read ; 
 
 varId = netcdf.inqVarID(trackNcids(kk), 'SpecularPointLat');
 read=netcdf.getVar(trackNcids(kk), varId);
 
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name, '/SpecularPointLat']) ; 
-ReflectionCoefficientAtSP(kk).SpecularPointLat=read ; 
+ReflectionCoefficientAtSP(Track_ID).SpecularPointLat=read ; 
 
 varId = netcdf.inqVarID(trackNcids(kk), 'SpecularPointLon');
 read=netcdf.getVar(trackNcids(kk), varId);
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name, '/SpecularPointLon']) ;
-ReflectionCoefficientAtSP(kk).SpecularPointLon=read ; 
+ReflectionCoefficientAtSP(Track_ID).SpecularPointLon=read ; 
 
 
 varId = netcdf.inqVarID(trackNcids(kk), 'SPIncidenceAngle');
 read=netcdf.getVar(trackNcids(kk), varId);
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name,'/SPIncidenceAngle']) ;
-ReflectionCoefficientAtSP(kk).SPIncidenceAngle= read ; 
+ReflectionCoefficientAtSP(Track_ID).SPIncidenceAngle= read ; 
 
 varId = netcdf.inqVarID(trackNcids(kk), 'SPAzimuthARF');
 read=netcdf.getVar(trackNcids(kk), varId);
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name,'/SPAzimuthARF']) ;
-ReflectionCoefficientAtSP(kk).PAzimuthARF=read ; 
+ReflectionCoefficientAtSP(Track_ID).PAzimuthARF=read ; 
 
 varId = netcdf.inqVarID(trackNcids(kk), 'ReflectionHeight');
 read=netcdf.getVar(trackNcids(kk), varId);
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name,'/ReflectionHeight']) ;
-ReflectionCoefficientAtSP(kk).ReflectionHeight= read ; 
+ReflectionCoefficientAtSP(Track_ID).ReflectionHeight= read ; 
 
 % ii count the channels in each track 
 for ii=1:NumberOfChannels ; 
@@ -121,14 +124,14 @@ read=netcdf.getVar(coinNcids{kk}(ii,1), varId, 'double');
 %  read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %      [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %      '/Incoherent/ReflectionCoefficientAtSP']) ;
-ReflectionCoefficientAtSP(kk).L1_LHCP=read ; 
+ReflectionCoefficientAtSP(Track_ID).L1_LHCP=read ; 
 
 varId = netcdf.inqVarID(coinNcids{kk}(ii,1), 'Sigma0');
 read=netcdf.getVar(coinNcids{kk}(ii,1), varId, 'double');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/Sigma0']) ; 
-Sigma0(kk).L1_LHCP=read ; 
+Sigma0(Track_ID).L1_LHCP=read ; 
 
 if readDDM=="Yes" | readDDM=="Y"
     
@@ -138,7 +141,7 @@ read=netcdf.getVar(coinNcids2{kk}(ii,1), varId, 'uint16');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', DDMs_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/DDM']) ;
-Sigma0(kk).DDMs=read ; 
+Sigma0(Track_ID).DDMs=read ; 
 end
 
             case 'L1_RHCP'
@@ -148,7 +151,7 @@ read=netcdf.getVar(coinNcids{kk}(ii,1), varId, 'double');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/ReflectionCoefficientAtSP']) ;                
-ReflectionCoefficientAtSP(kk).L1_RHCP=read ; 
+ReflectionCoefficientAtSP(Track_ID).L1_RHCP=read ; 
 
 varId = netcdf.inqVarID(coinNcids{kk}(ii,1), 'Sigma0');
 read=netcdf.getVar(coinNcids{kk}(ii,1), varId, 'double');
@@ -156,7 +159,7 @@ read=netcdf.getVar(coinNcids{kk}(ii,1), varId, 'double');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/Sigma0']) ;
-Sigma0(kk).L1_RHCP=read ;   
+Sigma0(Track_ID).L1_RHCP=read ;   
 
 if readDDM=="Yes" | readDDM=="Y"
 
@@ -167,7 +170,7 @@ read=netcdf.getVar(coinNcids2{kk}(ii,1), varId, 'uint16');
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/DDM']) ;
 
-Sigma0(kk).DDMs=read ; 
+Sigma0(Track_ID).DDMs=read ; 
 end
             case 'L5_LHCP' 
 
@@ -177,14 +180,14 @@ read=netcdf.getVar(coinNcids{kk}(ii,1), varId, 'double');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/ReflectionCoefficientAtSP']) ;
-ReflectionCoefficientAtSP(kk).L5_LHCP=read ; 
+ReflectionCoefficientAtSP(Track_ID).L5_LHCP=read ; 
 
 varId = netcdf.inqVarID(coinNcids{kk}(ii,1), 'Sigma0');
 read=netcdf.getVar(coinNcids{kk}(ii,1), varId, 'double');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/Sigma0']) ;
-Sigma0(kk).L5_LHCP= read ; 
+Sigma0(Track_ID).L5_LHCP= read ; 
 
 if readDDM=="Yes" | readDDM=="Y"
 
@@ -194,7 +197,7 @@ read=netcdf.getVar(coinNcids2{kk}(ii,1), varId, 'uint16');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', DDMs_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/DDM']) ;
-Sigma0(kk).DDMs=read ; 
+Sigma0(Track_ID).DDMs=read ; 
 end
 
             case 'L5_RHCP' 
@@ -205,14 +208,14 @@ read=netcdf.getVar(coinNcids{kk}(ii,1), varId, 'double');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/ReflectionCoefficientAtSP']) ;
-ReflectionCoefficientAtSP(kk).L5_RHCP=read ; 
+ReflectionCoefficientAtSP(Track_ID).L5_RHCP=read ; 
 
 varId = netcdf.inqVarID(coinNcids{kk}(ii,1), 'Sigma0');
 read=netcdf.getVar(coinNcids{kk}(ii,1), varId, 'double');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/Sigma0']) ;
-Sigma0(kk).R5_LHCP=read ; 
+Sigma0(Track_ID).R5_LHCP=read ; 
 
 if readDDM=="Yes" | readDDM=="Y"
 
@@ -222,7 +225,7 @@ read=netcdf.getVar(coinNcids2{kk}(ii,1), varId, 'uint16');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', DDMs_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/DDM']) ;
-Sigma0(kk).DDMs=read ; 
+Sigma0(Track_ID).DDMs=read ; 
 end
 
       otherwise
@@ -242,14 +245,14 @@ read=netcdf.getVar(coinNcids{kk}(ii,1), varId, 'double');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/ReflectionCoefficientAtSP']) ;
-ReflectionCoefficientAtSP(kk).E1_LHCP=read ; 
+ReflectionCoefficientAtSP(Track_ID).E1_LHCP=read ; 
 
 varId = netcdf.inqVarID(coinNcids{kk}(ii,1), 'Sigma0');
 read=netcdf.getVar(coinNcids{kk}(ii,1), varId, 'double');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/Sigma0']) ;
-Sigma0(kk).E1_LHCP=read ; 
+Sigma0(Track_ID).E1_LHCP=read ; 
 
 if readDDM=="Yes" | readDDM=="Y"
 
@@ -259,7 +262,7 @@ read=netcdf.getVar(coinNcids2{kk}(ii,1), varId, 'uint16');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', DDMs_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/DDM']) ;
-Sigma0(kk).DDMs=read ; 
+Sigma0(Track_ID).DDMs=read ; 
 end
 
       case 'E1_RHCP'
@@ -269,14 +272,14 @@ read=netcdf.getVar(coinNcids{kk}(ii,1), varId, 'double');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/ReflectionCoefficientAtSP']) ;                
-ReflectionCoefficientAtSP(kk).E1_RHCP=read ; 
+ReflectionCoefficientAtSP(Track_ID).E1_RHCP=read ; 
 
 varId = netcdf.inqVarID(coinNcids{kk}(ii,1), 'Sigma0');
 read=netcdf.getVar(coinNcids{kk}(ii,1), varId, 'double');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/Sigma0']) ;
-Sigma0(kk).E1_RHCP=read ;       
+Sigma0(Track_ID).E1_RHCP=read ;       
 
 if readDDM=="Yes" | readDDM=="Y"
 
@@ -286,7 +289,7 @@ read=netcdf.getVar(coinNcids2{kk}(ii,1), varId, 'uint16');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', DDMs_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/DDM']) ;
-Sigma0(kk).DDMs=read ; 
+Sigma0(Track_ID).DDMs=read ; 
 end
 
         case 'E5_LHCP' 
@@ -296,14 +299,14 @@ read=netcdf.getVar(coinNcids{kk}(ii,1), varId, 'double');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/ReflectionCoefficientAtSP']) ;
-ReflectionCoefficientAtSP(kk).E5_LHCP= read ; 
+ReflectionCoefficientAtSP(Track_ID).E5_LHCP= read ; 
 
 varId = netcdf.inqVarID(coinNcids{kk}(ii,1), 'Sigma0');
 read=netcdf.getVar(coinNcids{kk}(ii,1), varId, 'double');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/Sigma0']) ;
-Sigma0(kk).E5_LHCP=read ; 
+Sigma0(Track_ID).E5_LHCP=read ; 
 
 if readDDM=="Yes" | readDDM=="Y"
 
@@ -313,7 +316,7 @@ read=netcdf.getVar(coinNcids2{kk}(ii,1), varId, 'uint16');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', DDMs_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/DDM']) ;
-Sigma0(kk).DDMs=read ; 
+Sigma0(Track_ID).DDMs=read ; 
 end
         case 'E5_RHCP' 
     
@@ -322,14 +325,14 @@ read=netcdf.getVar(coinNcids{kk}(ii,1), varId, 'double');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/ReflectionCoefficientAtSP']) ;
-ReflectionCoefficientAtSP(kk).E5_RHCP=read ; 
+ReflectionCoefficientAtSP(Track_ID).E5_RHCP=read ; 
 
 varId = netcdf.inqVarID(coinNcids{kk}(ii,1), 'Sigma0');
 read=netcdf.getVar(coinNcids{kk}(ii,1), varId, 'double');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', metadata_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/Sigma0']) ;
-Sigma0(kk).R5_LHCP=read ; 
+Sigma0(Track_ID).R5_LHCP=read ; 
 
 if readDDM=="Yes" | readDDM=="Y"
     
@@ -339,7 +342,7 @@ read=netcdf.getVar(coinNcids2{kk}(ii,1), varId, 'uint16');
 % read=ncread([Path_L1B_day,'\',char(Dir_Day(jj)),'\', DDMs_name],...
 %     [infometa.Groups(kk).Name,'/', infometa.Groups(kk).Groups(ii).Name,...
 %     '/Incoherent/DDM']) ;
-Sigma0(kk).DDMs=read ; 
+Sigma0(Track_ID).DDMs=read ; 
 end
 
       otherwise

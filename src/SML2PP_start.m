@@ -1,9 +1,24 @@
 function SML2PP_start(mode, Path_HydroGNSS_Data,Path_HydroGNSS_ProcessedData,...
     Path_Auxiliary, year, month, day, SM_Time_resolution,Resolution, Frequency, Polarization)
 
-%clear all
+Resolution
+Frequency
+Polarization
+whos Resolution
+whos Frequency
+whos Polarization
+
+% 
+% clear all
+% close all
+%
+% Abilitate final plot of the map (to be eventually transferred to the GUI 
 plotTag='Yes' ; 
 % a=1 ; 
+if exist('mode')==0  | exist('mode')==2
+    disp('ERROR: INPUT ARGUMENTS MISSING. Program exiting') ; 
+    return ;
+end
 if mode=="-input"
     disp('Command input mode') 
 if exist('Path_HydroGNSS_Data')==0 & exist('Path_HydroGNSS_ProcessedData')==0 &...
@@ -12,14 +27,22 @@ if exist('Path_HydroGNSS_Data')==0 & exist('Path_HydroGNSS_ProcessedData')==0 &.
         exist('Frequency')==0 & exist('Polarization')==0 
     disp('ERROR: MISSING INPUTS. Program exiting') ; 
     return ;
-elseif (Frequency ~= "L1" & Frequency ~= "L5" & Frequency ~= "E1" & Frequency ~= "E5") |...
-        (Polarization ~= "L" & Polarization ~= "R" & Polarization ~= "dual") ;
-        disp('ERROR: WRONG INPUT. Program exiting') ; 
-    return
-elseif isfolder(Path_HydroGNSS_Data) ==0 | isfolder(Path_HydroGNSS_ProcessedData) ==0 
-    disp('ERROR: FOLDER DOES NOT EXIST. Program exiting') ; 
-    return 
 end
+%
+if isequal(Frequency,'L1')==0 & isequal(Frequency,'L5')==0 & isequal(Frequency,'E1')==0 & isequal(Frequency,'E5')==0 ; 
+        disp('ERROR: WRONG FREQUENCY CHANNEL. Program exiting') ; 
+    return
+end
+%
+if isequal(Polarization,'L')==0 & isequal(Polarization,'R')==0 & isequal(Polarization,'dual')==0 ;
+        disp('ERROR: WRONG POLARIZATION CHANNEL. Program exiting') ; 
+    return
+end
+if isfolder(Path_HydroGNSS_Data) ==0 | isfolder(Path_HydroGNSS_ProcessedData) ==0 
+    disp('ERROR: FOLDER DOES NOT EXIST. Program exiting') ; 
+    return
+end
+
 load('./conf/Configuration2.mat') ;
 init_SM_Day=datetime(str2num(year), str2num(month), str2num(day)) ;
 SM_Time_resolution=str2num(SM_Time_resolution) ; 
@@ -80,9 +103,24 @@ save('./conf/Configuration.mat', 'Answer', '-append') ;
 % SM_Time_resolution= 1 ;
 
 % ***** get defaults and directories of input L1B products and L2 output
-Path_HydroGNSS_Data = uigetdir(Path_HydroGNSS_Data, 'Select input L1B data folder') ; 
+if Path_HydroGNSS_Data==0 ; 
+    Path_HydroGNSS_Data = uigetdir('./', 'Select input L1B data folder') ; 
+else
+    Path_HydroGNSS_Data = uigetdir(Path_HydroGNSS_Data, 'Select input L1B data folder') ; 
+end
+%
+if Path_HydroGNSS_ProcessedData==0 ; 
+    Path_HydroGNSS_ProcessedData=uigetdir('./', 'Select output L2 data folder') ;
+else
 Path_HydroGNSS_ProcessedData=uigetdir(Path_HydroGNSS_ProcessedData, 'Select output L2 data folder') ;
+end
+%
+if Path_Auxiliary==0 ; 
+Path_Auxiliary=uigetdir('./', 'Select Auxiliary files folder') ;
+else
 Path_Auxiliary=uigetdir(Path_Auxiliary, 'Select Auxiliary files folder') ;
+end
+%
 % ***** get defaults and directories of input L1B products and L2 output
 %
 % Path_HydroGNSS_Data = uigetdir('./', 'Select input L1B data folder') ; 
