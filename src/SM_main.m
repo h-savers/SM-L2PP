@@ -120,7 +120,7 @@ end
 % *********   Create map of mean observables in an EASE grid reference 
 if Resolution==25, ngrid_x=1388; ngrid_y=584; else disp('Wrong resolution'), end
 %    
-[a b]=size(IntegrationMidPointTime)
+[a b]=size(IntegrationMidPointTime)  ; 
 if b==0 disp('ERROR: DATA NOT FOUND IN THE AREA. Program exiting') ; 
     return ;
 end
@@ -258,14 +258,14 @@ Outdirectory=[Path_HydroGNSS_ProcessedData '\' OutputProduct.DataID] ;
 %
 % ***************  Plot output map
 if plotTag=='Yes'
-    figure, imagesc(Grid_SM')
-end
+figure, imagesc(Grid_SM')
 title(['Soil moisture map [%]'] );
 c=colorbar ; 
 c.Label.String = 'Soil Moisture [%]'; 
 cmin=min(Grid_SM(:)) ; cmax=max(Grid_SM(:)) ; 
 cmin=round(cmin-1) ; cmax=round(cmax+1) ; 
 c.Limits=[cmin cmax] ; 
+end
 %
 % ****************   Create structure to write output L2 product
 %
@@ -273,7 +273,7 @@ c.Limits=[cmin cmax] ;
 %
 warning('off') ; 
 TT=clock ; 
-if exist([Outdirectory '\' Outfilename])==2, Outdirectory=[Outdirectory '_' num2str((TT(4))) '_' num2str((TT(5))) ] ; 
+if exist([Outdirectory '\' Outfilename])==2, Outdirectory=[Outdirectory '_' num2str((TT(4))) '_' num2str((TT(5))) ] ; end; 
 status= mkdir(Outdirectory) ; 
 soil= WritingNetcdf(OutputProduct,Outdirectory ) ; 
 % save([Outdirectory '\' Outfilename], 'OutputProduct')

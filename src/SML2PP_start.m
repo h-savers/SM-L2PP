@@ -1,12 +1,9 @@
 function SML2PP_start(mode, Path_HydroGNSS_Data,Path_HydroGNSS_ProcessedData,...
     Path_Auxiliary, year, month, day, SM_Time_resolution,Resolution, Frequency, Polarization)
 
-Resolution
-Frequency
-Polarization
-whos Resolution
-whos Frequency
-whos Polarization
+% whos Resolution
+% whos Frequency
+% whos Polarization
 
 % 
 % clear all
