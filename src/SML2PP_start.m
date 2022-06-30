@@ -1,6 +1,5 @@
-function SML2PP_start(mode, Path_HydroGNSS_Data,Path_HydroGNSS_ProcessedData,...
-    Path_Auxiliary, year, month, day, SM_Time_resolution,Resolution, Frequency, Polarization)
-
+function SML2PP_start(mode, Path_PDGS_NAS_folder, ...
+    startdate,enddate,SM_Time_resolution, Resolution, Frequency, Polarization)
 % whos Resolution
 % whos Frequency
 % whos Polarization
@@ -18,13 +17,13 @@ if exist('mode')==0  | exist('mode')==2
 end
 if mode=="-input"
     disp('Command input mode') 
-if exist('Path_HydroGNSS_Data')==0 & exist('Path_HydroGNSS_ProcessedData')==0 &...
-        exist('year')==0 & exist('month')==0 & exist('day')==0 &...
-        exist('SM_Time_resolution')==0 & exist('Resolution')==0 &...
-        exist('Frequency')==0 & exist('Polarization')==0 
-    disp('ERROR: MISSING INPUTS. Program exiting') ; 
-    return ;
-end
+%
+if exist('startdate')==0 & exist('enddate')==0 & exist('Path_PDGS_NAS_folder')==0  &...
+            exist('SM_Time_resolution')==0 & exist('Resolution')==0 &...
+            exist('Frequency')==0 & exist('Polarization')==0
+        disp('MISSING INPUTS. Program exiting') ;
+        return ;
+    end
 %
 if isequal(Frequency,'L1')==0 & isequal(Frequency,'L5')==0 & isequal(Frequency,'E1')==0 & isequal(Frequency,'E5')==0 ; 
         disp('ERROR: WRONG FREQUENCY CHANNEL. Program exiting') ; 
@@ -35,17 +34,22 @@ if isequal(Polarization,'L')==0 & isequal(Polarization,'R')==0 & isequal(Polariz
         disp('ERROR: WRONG POLARIZATION CHANNEL. Program exiting') ; 
     return
 end
-if isfolder(Path_HydroGNSS_Data) ==0 | isfolder(Path_HydroGNSS_ProcessedData) ==0 
+if isfolder(Path_PDGS_NAS_folder) ==0  
     disp('ERROR: FOLDER DOES NOT EXIST. Program exiting') ; 
     return
 end
 
 load('./conf/Configuration2.mat') ;
-init_SM_Day=datetime(str2num(year), str2num(month), str2num(day)) ;
-SM_Time_resolution=str2num(SM_Time_resolution) ; 
-Resolution=str2num(Resolution) ; 
+  init_SM_Day=datetime((startdate));
+  SM_Time_resolution=str2num(SM_Time_resolution) ; 
+  %% ????  SM_Time_resolution=days(enddate-startdate)+1 ;
+  Resolution=str2num(Resolution) ; 
 %
 % *************  Run the main program
+%
+Path_HydroGNSS_Data=[Path_PDGS_NAS_folder '\' 'DataRelease\L1A_L1B'];
+Path_HydroGNSS_ProcessedData=[Path_PDGS_NAS_folder '\' 'DataRelease\L2OP-SSM'];
+Path_Auxiliary=[Path_PDGS_NAS_folder '\' 'Auxiliar_Data\L2OP-SSM'];
 %
 SM_main(init_SM_Day,SM_Time_resolution, Path_HydroGNSS_Data,Path_Auxiliary,...
      Path_HydroGNSS_ProcessedData,Resolution, metadata_name, DDMs_name, ...
