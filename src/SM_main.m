@@ -5,7 +5,7 @@ function SM_main(init_SM_Day,SM_Time_resolution, Path_HydroGNSS_Data,Path_Auxili
 tic
 %
 % ***** read algorithms coefficients
-load('./conf/Coefficients.mat')
+load('../conf/Coefficients.mat')
 % ***** read algorithms coefficients
 %
 % ***** Initialize variables
@@ -275,7 +275,7 @@ warning('off') ;
 TT=clock ; 
 if exist([Outdirectory '\' Outfilename])==2, Outdirectory=[Outdirectory '_' num2str((TT(4))) '_' num2str((TT(5))) ] ; end; 
 status= mkdir(Outdirectory) ; 
-soil= WritingNetcdf(OutputProduct,Outdirectory ) ; 
+ WritingNetcdf(OutputProduct,Outdirectory ) ; 
 % save([Outdirectory '\' Outfilename], 'OutputProduct')
 %
 % ****************   Write output L2 product

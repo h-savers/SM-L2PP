@@ -1,4 +1,4 @@
-function soil = WritingNetcdf(OutputProduct, Outdirectory)
+function WritingNetcdf(OutputProduct, Outdirectory)
 Name="HydroGNSS Soil Moisture";
 % date_created
 License=OutputProduct.Licence;
@@ -117,5 +117,5 @@ netcdf.putVar(ncid,var14,Signal);
 netcdf.putAtt(ncid,var14,'Description','GNSS signal and polarization used in the retrieval algorithm');
 
 netcdf.close(ncid);
-soil=ncinfo('HydroGNSS_SoilMoisture.nc');
+% soil=ncinfo('HydroGNSS_SoilMoisture.nc');
 % end
