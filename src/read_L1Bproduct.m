@@ -54,7 +54,7 @@ for track = 1:length(trackNcids2)
 toc
 disp('Initiate reading loop over groups') ; 
 % loop on Groups (i.e., tracks) within each 6-hours segment 
-Num_Groups=2 ; % WARNTING: this is to read only one group and speed up
+% Num_Groups=2 ; % WARNTING: this is to read only one group and speed up
 for kk=1:Num_Groups ; 
 toc
 disp(['Reading Six-hour ', num2str(jj), ' of ', num2str(Num_sixhours), ' - Group/Track ', num2str(kk), ' of ', num2str(Num_Groups)]) ; 
@@ -64,7 +64,8 @@ if NumberOfChannels > 0
 % Case of HydroGNSS with several channels. Read specular point data   
 Track_ID=Track_ID+1 ; 
 ReflectionCoefficientAtSP(Track_ID).Name=['Track n. ', num2str(Track_ID)] ; 
-ReflectionCoefficientAtSP(Track_ID).PRN=infometa.Groups(kk).Attributes(8).Value  ; 
+ReflectionCoefficientAtSP(Track_ID).PRN=infometa.Groups(kk).Attributes(9).Value  ; 
+ReflectionCoefficientAtSP(Track_ID).TrackIDOrbit=infometa.Groups(kk).Attributes(2).Value  ; 
 
 varIdTime = netcdf.inqVarID(trackNcids(kk), 'IntegrationMidPointTime');
 read=netcdf.getVar(trackNcids(kk), varIdTime);
@@ -110,6 +111,9 @@ for ii=1:NumberOfChannels ;
     
 % Find polarization and channel (Galileo E1, E5 or GPS L1, L5)
 Polarization=infometa.Groups(kk).Groups(ii).Attributes(4).Value ; % polarization LHCP or RHCP
+% Change by Mauro to fix bug on name of signal without undescore
+infometa.Groups(kk).Groups(ii).Attributes(3).Value=replace(infometa.Groups(kk).Groups(ii).Attributes(3).Value, ' ', '_') ; 
+% end change
 Signal=split(infometa.Groups(kk).Groups(ii).Attributes(3).Value, '_') ; 
 Signal_Pol=[Signal{2}, '_', Polarization] ; 
 switch Signal{1} 
