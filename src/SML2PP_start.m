@@ -39,7 +39,7 @@ if isfolder(Path_PDGS_NAS_folder) ==0
     return
 end
 
-load('./conf/Configuration2.mat') ;
+load('../conf/Configuration2.mat') ;
   init_SM_Day=datetime((startdate));
   SM_Time_resolution=str2num(SM_Time_resolution) ; 
   %% ????  SM_Time_resolution=days(enddate-startdate)+1 ;
@@ -60,8 +60,8 @@ SM_main(init_SM_Day,SM_Time_resolution, Path_HydroGNSS_Data,Path_Auxiliary,...
 elseif mode=="-GUI" 
     disp('GUI mode')
 % *************  Start GUI 
-load('./conf/Configuration.mat') ;
-global coe ; 
+load('../conf/Configuration.mat') ;
+% global model ; 
 % ****** get inputs from GUI
 prompt={'Metadata file name: ',...
          'DDM file name: ',...
@@ -91,7 +91,7 @@ Polarization=Answer{10} ;
 % ****** get inputs from GUI
 %
 % ****** Save GUI input into Input Configuration File 
-save('./conf/Configuration.mat', 'Answer', '-append') ;
+save('../conf/Configuration.mat', 'Answer', '-append') ;
 % ****** Save GUI input into Input Configration File 
 %
 % readDDM='Yes' ;  
@@ -129,7 +129,7 @@ end
 % Path_Auxiliary=uigetdir('./', 'Select Auxiliary files folder') ;
 
 % save defaults and directories  
-save('./conf/Configuration.mat', 'Path_HydroGNSS_Data', 'Path_HydroGNSS_ProcessedData',...
+save('../conf/Configuration.mat', 'Path_HydroGNSS_Data', 'Path_HydroGNSS_ProcessedData',...
     'Path_Auxiliary', 'metadata_name', 'readDDM', '-append') ;
 % save defaults and directories  
 %

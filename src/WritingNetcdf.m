@@ -116,6 +116,8 @@ var14=netcdf.defVar(ncid,'Signal','NC_STRING',dimid2);
 netcdf.putVar(ncid,var14,Signal);
 netcdf.putAtt(ncid,var14,'Description','GNSS signal and polarization used in the retrieval algorithm');
 
+% ReflectionCoefficientAtSP(Track_ID).TrackIDOrbit
+
 netcdf.close(ncid);
-soil=ncinfo('HydroGNSS_SoilMoisture.nc');
+soil=ncinfo([Outdirectory '\' FileName '.nc']);
 % end

@@ -5,7 +5,8 @@ function SM_main(init_SM_Day,SM_Time_resolution, Path_HydroGNSS_Data,Path_Auxili
 tic
 %
 % ***** read algorithms coefficients
-load('./conf/Coefficients.mat')
+load('../conf/Coefficients.mat')
+global model ; 
 % ***** read algorithms coefficients
 %
 % ***** Initialize variables
@@ -175,28 +176,37 @@ UTCPointTime = datetime(PointTime,'ConvertFrom','datenum') ;
 % *********   Read Auxiliary files
 %
 load([Path_Auxiliary,'/Landuse/lccs_EASE25km_no190-210-220.mat']) ; 
-load([Path_Auxiliary,'/CCIbiomass/biomass_EASEv2-25km.mat']) ; 
-load([Path_Auxiliary,'/DEM/elevation_EASEv2-25km.mat']) ; 
+load([Path_Auxiliary,'/CCIbiomass/agb_EASE25_mean.mat']) ; 
+load([Path_Auxiliary,'/DEM/elevation_EASEv2-25km.mat']) ;
+Biomass=agb_class_EASE25_mean ;
+Elevation= dem.DEM_elevation_EASE25 ;
+Slope=dem.DEM_slope_EASE25 ;
+Rmsheight=dem.DEM_rmsheight_EASE25 ;
+Rmsslope=dem.DEM_rmsslope_EASE25 ; 
 %
 % *********   Read Auxiliary files
-%
+%Biomass,Elevation,Slope, Rmsheight,Rmsslope
 % *********   Compute soil moisture
 indmodel=1 ; 
-goodreflections=find(Map_Reflectivity_linear >0 & isnan(Map_Reflectivity_linear) ==0) ; 
-SM = SMretrieval(Map_Reflectivity_dB(goodreflections),agb_class_EASE25(goodreflections),...
-    DEM_elevation_EASE25(goodreflections), indmodel) ; 
+% goodreflections=find(Map_Reflectivity_linear >0 & isnan(Map_Reflectivity_linear) ==0) ; 
+goodreflections=find((Map_Reflectivity_linear>=0.01) & (Slope<8) & ...
+    (Elevation<2500) & Rmsheight < 350) ; 
+
+SM=SMretrieval(Map_Reflectivity_dB(goodreflections),Biomass(goodreflections),...
+    Elevation(goodreflections), Slope(goodreflections),...
+    Rmsheight(goodreflections), Rmsslope(goodreflections), indmodel) ; 
 % *********   Compute soil moisture
 %
 [colmax, c]=find(SPlat==min(SPlat(:))) ;
 [colmin, c]=find(SPlat==max(SPlat(:))) ;
 [c, rowmax]=find(SPlon==max(SPlon(:))) ;
 [c, rowmin]=find(SPlon==min(SPlon(:))) ;
-Grid_Reflectivity_dB=Map_Reflectivity_dB(colmin-1: colmax+1, rowmin-1:rowmax+1) ; 
+Grid_Reflectivity_dB=Map_Reflectivity_dB(colmin-1: colmax+1, rowmax-1:rowmin+1) ; 
 Grid_SPlat=SPlat(colmin-1: colmax+1, rowmin-1:rowmax+1) ; 
 Grid_SPlon=SPlon(colmin-1: colmax+1, rowmin-1:rowmax+1) ;
 Grid_SM=NaN(1388,584) ;
 Grid_SM(goodreflections) =SM ; 
-Grid_SM=Grid_SM(colmin-1: colmax+1, rowmin-1:rowmax+1) ;
+Grid_SM=Grid_SM(colmin-1: colmax+1, rowmax-1:rowmin+1) ;
 
 %
 % ****************   Create structure to write output L2 product
@@ -242,9 +252,11 @@ OutputProduct.NumIntegratedSP=NumIntegratedSP(goodreflections)  ; % Attribute: i
 OutputProduct.Uncertainty=RadiometricResolution(goodreflections)  ; 
 OutputProduct.Quality=zeros(NumRetrievals) ; % Attribute: unit '8 bits' description '8 Quality flags' 
 OutputProduct.Map_Reflectivity=Map_Reflectivity_dB(goodreflections) ;  % Attribute: unit: 'dB' description 'mean L1B reflectivity in the aggregation area'
-OutputProduct.agb_class_EASE25=agb_class_EASE25(goodreflections) ;  % Attribute: unit: 'ton' description 'mean CCI agb in the aggregation area'
-OutputProduct.DEM_elevation_EASE25=DEM_elevation_EASE25(goodreflections) ; % Attribute: unit: 'meters' description 'mean GMTED 1km DEM elevation in the aggregation area'
+OutputProduct.agb_class_EASE25=Biomass(goodreflections) ;  % Attribute: unit: 'ton' description 'mean CCI agb in the aggregation area'
+OutputProduct.DEM_elevation_EASE25=Elevation(goodreflections) ; % Attribute: unit: 'meters' description 'mean GMTED 1km DEM elevation in the aggregation area'
 OutputProduct.Signal= Signal ; % Attribute: unit: 'text' description 'GNSS signal processed'
+%
+% Other parameters should be added
 % Gridded quantities 
 OutputProduct.Grid_Reflectivity_dB=Grid_Reflectivity_dB ; 
 OutputProduct.Grid_SM=Grid_SM  ; 
