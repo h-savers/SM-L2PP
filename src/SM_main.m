@@ -1,15 +1,39 @@
 
-function SM_main(init_SM_Day,SM_Time_resolution, Path_HydroGNSS_Data,Path_Auxiliary,...
+function SM_main(init_SM_Day,final_SM_Day, SM_Time_resolution, Path_HydroGNSS_Data,Path_Auxiliary,...
      Path_HydroGNSS_ProcessedData,Resolution, metadata_name, DDMs_name,...
      readDDM, Frequency, Polarization, plotTag)
 tic
 %
-% ***** read algorithms coefficients
-load('../conf/Coefficients.mat')
 global model ; 
-% ***** read algorithms coefficients
+%
+% *********   Read Auxiliary files
+%
+load([Path_Auxiliary,'/Landuse/lccs_EASE25km_no190-210-220.mat']) ; 
+load([Path_Auxiliary,'/CCIbiomass/agb_EASE25_mean.mat']) ; 
+load([Path_Auxiliary,'/DEM/elevation_EASEv2-25km.mat']) ;
+Biomass=agb_class_EASE25_mean ;
+Elevation= dem.DEM_elevation_EASE25 ;
+Slope=dem.DEM_slope_EASE25 ;
+Rmsheight=dem.DEM_rmsheight_EASE25 ;
+Rmsslope=dem.DEM_rmsslope_EASE25 ; 
+%
+% *********   Read Auxiliary files
+%
+% ***** read algorithms model and/or coefficients
+%
+load('../conf/Coefficients.mat')
+% global model ; 
+% ***** read algorithms model and/or coefficients
+%
+% ***** for on the day to be processed
+%
+num_of_days=datenum(final_SM_Day)-datenum(init_SM_Day)+1 ; 
+for ind_day=1: num_of_days ; 
+Day_to_process= init_SM_Day+ind_day-1 ;    
 %
 % ***** Initialize variables
+ReflectionCoefficientAtSP={}  ;
+Sigma0={}  ; 
 IntegrationMidPointTime=[] ; 
 SpecularPointLat=[] ; 
 SpecularPointLon=[] ; 
@@ -17,7 +41,7 @@ SPIncidenceAngle=[] ;
 DDMSNRAtPeakSingleDDM=[] ; 
 PAzimuthARF=[] ; 
 ReflectionHeight=[] ; 
-ReflectionCoefficientAtSP.Name='ReflectionCoefficient' ; 
+% ReflectionCoefficientAtSP.Name='ReflectionCoefficient' ; 
 ReflectionCoefficientAtSP.L1_LHCP=[] ; 
 ReflectionCoefficientAtSP.L1_RHCP=[] ; 
 ReflectionCoefficientAtSP.L5_LHCP=[] ; 
@@ -27,7 +51,7 @@ ReflectionCoefficientAtSP.E1_RHCP=[] ;
 ReflectionCoefficientAtSP.E5_LHCP=[] ; 
 ReflectionCoefficientAtSP.E5_RHCP=[] ; 
 
-Sigma0.Name='Sigma0' ; 
+% Sigma0.Name='Sigma0' ; 
 Sigma0.L1_LHCP=[] ; 
 Sigma0.L1_RHCP=[] ; 
 Sigma0.L5_LHCP=[] ; 
@@ -45,10 +69,10 @@ DDM=[] ;
 % ***** Initialize variables
 %
 % ***********  read L1B data
- [ReflectionCoefficientAtSP, Sigma0, DataTag]=read_L1Bproduct(init_SM_Day,...
+ [ReflectionCoefficientAtSP, Sigma0, DataTag, noday]=read_L1Bproduct(Day_to_process,...
      SM_Time_resolution, Path_HydroGNSS_Data, metadata_name, readDDM, DDMs_name) ; 
 % ***********  read L1B data
-%
+if noday==1, continue, end  ;  
 % **********  Selecte only one signal for L2PP (placeholder)
 %
 [a Num_records]=size(ReflectionCoefficientAtSP) ; 
@@ -173,24 +197,11 @@ UTCPointTime = datetime(PointTime,'ConvertFrom','datenum') ;
 %
 % *********   Create map of mean observables in an EASE grid reference
 %
-% *********   Read Auxiliary files
-%
-load([Path_Auxiliary,'/Landuse/lccs_EASE25km_no190-210-220.mat']) ; 
-load([Path_Auxiliary,'/CCIbiomass/agb_EASE25_mean.mat']) ; 
-load([Path_Auxiliary,'/DEM/elevation_EASEv2-25km.mat']) ;
-Biomass=agb_class_EASE25_mean ;
-Elevation= dem.DEM_elevation_EASE25 ;
-Slope=dem.DEM_slope_EASE25 ;
-Rmsheight=dem.DEM_rmsheight_EASE25 ;
-Rmsslope=dem.DEM_rmsslope_EASE25 ; 
-%
-% *********   Read Auxiliary files
-%Biomass,Elevation,Slope, Rmsheight,Rmsslope
 % *********   Compute soil moisture
 indmodel=1 ; 
-% goodreflections=find(Map_Reflectivity_linear >0 & isnan(Map_Reflectivity_linear) ==0) ; 
-goodreflections=find((Map_Reflectivity_linear>=0.01) & (Slope<8) & ...
-    (Elevation<2500) & Rmsheight < 350) ; 
+goodreflections=find(Map_Reflectivity_linear >0 & isnan(Map_Reflectivity_linear) ==0) ; 
+% goodreflections=find((Map_Reflectivity_linear>=0.01) & (Slope<8) & ...
+%     (Elevation<2500) & Rmsheight < 350) ; 
 
 SM=SMretrieval(Map_Reflectivity_dB(goodreflections),Biomass(goodreflections),...
     Elevation(goodreflections), Slope(goodreflections),...
@@ -207,11 +218,10 @@ Grid_SPlon=SPlon(colmin-1: colmax+1, rowmin-1:rowmax+1) ;
 Grid_SM=NaN(1388,584) ;
 Grid_SM(goodreflections) =SM ; 
 Grid_SM=Grid_SM(colmin-1: colmax+1, rowmax-1:rowmin+1) ;
-
 %
 % ****************   Create structure to write output L2 product
 %
-% Check id DataTag is uique, otherwise exit with error message 
+% Check id DataTag is unique, otherwise exit with error message 
 DataTagUnique   =unique(DataTag) ; 
 [a b]=size(DataTagUnique) ; 
 % DataTagUnique=replace(DataTagUnique, [':'], ['-']) ; 
@@ -222,6 +232,9 @@ if b>1
     return
 else disp(['Data Tag -- ' char(DataTagUnique) ' -- is unique']) ;
 end
+%
+end 
+% ***** for on the day to be processed
 %
 NumRetrievals=size(goodreflections) ; 
 % Global 
@@ -274,7 +287,7 @@ figure, imagesc(Grid_SM')
 title(['Soil moisture map [%]'] );
 c=colorbar ; 
 c.Label.String = 'Soil Moisture [%]'; 
-cmin=min(Grid_SM(:)) ; cmax=max(Grid_SM(:)) ; 
+cmin=min(Grid_SM(:),[],'omitnan') ; cmax=max(Grid_SM(:),[],'omitnan') ; 
 cmin=round(cmin-1) ; cmax=round(cmax+1) ; 
 c.Limits=[cmin cmax] ; 
 end

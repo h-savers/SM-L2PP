@@ -119,5 +119,5 @@ netcdf.putAtt(ncid,var14,'Description','GNSS signal and polarization used in the
 % ReflectionCoefficientAtSP(Track_ID).TrackIDOrbit
 
 netcdf.close(ncid);
-soil=ncinfo([Outdirectory '\' FileName '.nc']);
+soil=ncinfo([Outdirectory '\' FileName]);
 % end

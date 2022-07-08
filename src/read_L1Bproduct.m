@@ -1,18 +1,25 @@
 
-function [ReflectionCoefficientAtSP, Sigma0, DataTag]=read_L1Bproduct(init_SM_Day,...
+function [ReflectionCoefficientAtSP, Sigma0, DataTag, noday]=read_L1Bproduct(Day_to_process,...
     SM_Time_resolution, Path_HydroGNSS_Data, metadata_name, readDDM, DDMs_name) ; 
 %
 Track_ID=0 ; % ID of the track written in the output structure
+noday=0 ; 
+ReflectionCoefficientAtSP={}  ; 
+Sigma0={}  ; 
+DataTag="" ; 
 %
 % ***********  loop on number of days to process for a single map
 formatSpec='%02u' ; 
 for j=1: SM_Time_resolution ; 
-    SM_Day=init_SM_Day+1-j  ; 
+    SM_Day=Day_to_process+1-j  ; 
 Month=month(SM_Day)  ; Day=day(SM_Day)   ; Year=year(SM_Day)   ; 
 Path_L1B_day=[Path_HydroGNSS_Data,'\', num2str(Year),'-', num2str(Month, formatSpec),'\',num2str(Day,formatSpec)] ;
+%
+if exist(Path_L1B_day)==0, disp(['Directory of day ' char(SM_Day) ' does not exist. Skipped']), noday=1, return , end; 
+%
 D=dir(Path_L1B_day) ; 
 Num_sixhours=0 ; 
-if length(D)==0 , disp('No L1B data found'), quit , end; 
+if length(D)==0 , disp(['No L1B data found in directory of day ' char(SM_Day)]), noday=1, return , end; 
 for jj=3:length(D)  ; % 
 if D(jj).isdir==1 , Num_sixhours=Num_sixhours+1 ;  end  ;  ; 
 end    
