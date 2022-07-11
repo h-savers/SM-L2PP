@@ -1,27 +1,36 @@
-function soil = WritingNetcdf(OutputProduct, Outdirectory)
-Name="HydroGNSS Soil Moisture";
-% date_created
-License=OutputProduct.Licence;
-FileName=OutputProduct.Filename;
-DataTag=OutputProduct.DataID;
+function soil = WritingNetcdf(Num_records, OutputProduct, AttributeProduct, Outdirectory)
+Name="HydroGNSS Soil Moisture" ;
+Datacreated=AttributeProduct.Creation ; 
+License=AttributeProduct.Licence;
+FileName=AttributeProduct.Filename;
+DataTag=AttributeProduct.DataTagUnique;
 SourceConstellation="HYDROGNSS";
 Program="European Space Agency Scout Program";
-ProcessingLevel=OutputProduct.Processinglevel;
-L2_ProcessorName=OutputProduct.Software;
-L2_ProcessorVersion=OutputProduct.Version;
+ProcessingLevel=AttributeProduct.Processinglevel;
+L2_ProcessorName=AttributeProduct.Software;
+L2_ProcessorVersion=AttributeProduct.Version;
 L2_ProcessorCreator="Sapienza University of Rome";
-FirstTimeStamp=OutputProduct.InitTimeOfData;
-LastTimeStamp=OutputProduct.FinalTimeOfData;
-ProjectionType=OutputProduct.Projection;
-
-NumberOfDays=OutputProduct.SM_Time_resolution;
-NumberOfPoint=OutputProduct.NumRetrievals;
+FirstTimeStamp=AttributeProduct.InitTimeOfData;
+LastTimeStamp=AttributeProduct.FinalTimeOfData;
+ProjectionType=AttributeProduct.Projection;
+SM_Time_resolution=AttributeProduct.SM_Time_resolution;
+NumberOfDays=AttributeProduct.num_of_days ; % total number of days processed  
+NumberOfTrack=Num_records ; 
+%
+% Loop over groups corresponding to different tracks
+% For Aneesha: from now on you have to complete to write each track vector
+% in a group
+for ii=1:Num_records ; 
+%
+NameTrack=OutputProduct(ii).NameTrack ; 
+NumberOfPoint(ii)=OutputProduct.NumRetrievals;
 NumberOfColumns=OutputProduct.GridColumns;
 NumberOfRows=OutputProduct.Gridrows;
 
 MeanObservationTime=OutputProduct.PointTime;
-MeanObservationUTCTime=string(OutputProduct.UTCTime);
-GridResolution=repmat(OutputProduct.Resolution,size(MeanObservationTime));
+MeanObservationUTCTime=OutputProduct.UTCTime;
+MeanObservationUTCTime=char(MeanObservationUTCTime);
+GridResolution=repmat(AttributeProduct.Resolution,size(MeanObservationTime));
 DataMeanLatitude=OutputProduct.SPlatitude;
 DataMeanLongitude=OutputProduct.SPlongitude;
 SoilMoisture=OutputProduct.SM;
@@ -32,7 +41,7 @@ QualityFlag=OutputProduct.Quality;
 MAP_Reflectivity=OutputProduct.Map_Reflectivity;
 AboveGroundBiomass=OutputProduct.agb_class_EASE25;
 DEM_elevation=OutputProduct.DEM_elevation_EASE25;
-Signal=repmat(string(OutputProduct.Signal),size(MeanObservationTime));
+Signal=OutputProduct.Signal;
 
  cmode = netcdf.getConstant('NETCDF4');
 %  cmode = bitor(cmode,netcdf.getConstant('CLOBBER')); % WARNING
@@ -44,7 +53,7 @@ ncid = netcdf.create([Outdirectory '\' FileName],cmode);
 
 %% attributes
 netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'Name',Name);
-netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'date_created','');
+netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'Product creation time',Datacreated);
 netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'License',License);
 netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'FileName',FileName);
 netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'DataTag',DataTag);
@@ -57,6 +66,8 @@ netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'L2_ProcessorCreator',L2_Pro
 netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'FirstTimeStamp',FirstTimeStamp);
 netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'LastTimeStamp',LastTimeStamp);
 netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'ProjectionType',ProjectionType);
+netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'NumberOfDays',NumberOfDays);
+
 
 %%dimensions
 
@@ -117,7 +128,10 @@ netcdf.putVar(ncid,var14,Signal);
 netcdf.putAtt(ncid,var14,'Description','GNSS signal and polarization used in the retrieval algorithm');
 
 % ReflectionCoefficientAtSP(Track_ID).TrackIDOrbit
-
+end
+%
+% end for over groups
+%
 netcdf.close(ncid);
 soil=ncinfo([Outdirectory '\' FileName]);
 % end

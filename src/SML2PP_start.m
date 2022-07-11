@@ -149,4 +149,5 @@ else
     disp('WRONG INPUT. Program exiting ')
     return 
 end % end if on input mode
+%
 end % end of the start function

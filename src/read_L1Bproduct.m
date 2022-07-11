@@ -1,12 +1,16 @@
 
-function [ReflectionCoefficientAtSP, Sigma0, DataTag, noday]=read_L1Bproduct(Day_to_process,...
-    SM_Time_resolution, Path_HydroGNSS_Data, metadata_name, readDDM, DDMs_name) ; 
+function [DataTag, noday, Track_ID, IND_sixhours]=read_L1Bproduct(DataTag, Day_to_process,...
+    SM_Time_resolution, Path_HydroGNSS_Data, metadata_name, readDDM, ...
+    DDMs_name, Track_ID, IND_sixhours) ; 
 %
-Track_ID=0 ; % ID of the track written in the output structure
+% Track_ID: ID of the track written in the output structure which
+% starts from the one the previous day
 noday=0 ; 
-ReflectionCoefficientAtSP={}  ; 
-Sigma0={}  ; 
-DataTag="" ; 
+global ReflectionCoefficientAtSP Sigma0 ; 
+%
+% ReflectionCoefficientAtSP={}  ; removed as it is initialized outside
+% Sigma0={}  ; ReflectionCoefficientAtSP
+% DataTag="" ; 
 %
 % ***********  loop on number of days to process for a single map
 formatSpec='%02u' ; 
@@ -40,7 +44,8 @@ disp('Initiate reading loop of 6-hours') ;
 for jj=1:Num_sixhours  ; 
 infometa=ncinfo([Path_L1B_day,'\',char(Dir_Day(jj)),'\',metadata_name]) ; 
 [a, Num_Groups]=size(infometa.Groups) ; 
-DataTag(jj)=convertCharsToStrings(infometa.Attributes(5).Value) ; 
+IND_sixhours=IND_sixhours+1  ; 
+DataTag(IND_sixhours)=convertCharsToStrings(infometa.Attributes(5).Value) ; 
 ncid = netcdf.open(fullfile([Path_L1B_day,'\',char(Dir_Day(jj))],metadata_name), 'NC_NOWRITE');
 trackNcids = netcdf.inqGrps(ncid);
  for track = 1:length(trackNcids)
