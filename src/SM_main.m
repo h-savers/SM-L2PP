@@ -289,7 +289,7 @@ c=colorbar ;
 c.Label.String = 'Soil Moisture [%]'; 
 cmin=min(Grid_SM(:),[],'omitnan') ; cmax=max(Grid_SM(:),[],'omitnan') ; 
 cmin=round(cmin-1) ; cmax=round(cmax+1) ; 
-c.Limits=[cmin cmax] ; 
+% c.Limits=[cmin cmax] ; 
 end
 %
 % ****************   Create structure to write output L2 product

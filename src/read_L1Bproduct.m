@@ -15,7 +15,7 @@ for j=1: SM_Time_resolution ;
 Month=month(SM_Day)  ; Day=day(SM_Day)   ; Year=year(SM_Day)   ; 
 Path_L1B_day=[Path_HydroGNSS_Data,'\', num2str(Year),'-', num2str(Month, formatSpec),'\',num2str(Day,formatSpec)] ;
 %
-if exist(Path_L1B_day)==0, disp(['Directory of day ' char(SM_Day) ' does not exist. Skipped']), noday=1, return , end; 
+if exist(Path_L1B_day)==0, disp(['Directory of day ' char(SM_Day) ' does not exist. Skipped']), noday=1; return , end; 
 %
 D=dir(Path_L1B_day) ; 
 Num_sixhours=0 ; 
