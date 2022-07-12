@@ -50,7 +50,8 @@ netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'L2_ProcessorCreator',L2_Pro
 netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'FirstTimeStamp',FirstTimeStamp);
 netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'LastTimeStamp',LastTimeStamp);
 netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'ProjectionType',ProjectionType);
-netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'NumberOfDays',NumberOfDays);
+netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'TimeResolution',SM_Time_resolution);
+% netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'NumberOfDays',NumberOfDays);
 
 %     TrackID=size(OutputProduct.NameTrack);
 for  n=1:NumberOfTrack % no of trackgroups
@@ -78,6 +79,7 @@ for  n=1:NumberOfTrack % no of trackgroups
     AboveGroundBiomass=OutputProduct(n).agb_class_EASE25;
     DEM_elevation=OutputProduct(n).DEM_elevation_EASE25;
     Signal=OutputProduct(n).Signal;
+    TrackIDOrbit=OutputProduct(n).TrackIDOrbit;
     %%dimensions
 
     dimid1 = netcdf.defDim(trackid(n),'NumberOfDays',NumberOfDays);%20
@@ -87,6 +89,16 @@ for  n=1:NumberOfTrack % no of trackgroups
     dimid5=[dimid3 dimid4];
     %%variables
 
+
+
+
+    netcdf.putAtt(trackid(n), netcdf.getConstant("NC_GLOBAL"),'TrackName',NameTrack);
+    netcdf.putAtt(trackid(n), netcdf.getConstant("NC_GLOBAL"),'NumberOfPoint',NumberOfPoint);
+    netcdf.putAtt(trackid(n), netcdf.getConstant("NC_GLOBAL"),'NumberOfColumns',NumberOfColumns);
+    netcdf.putAtt(trackid(n), netcdf.getConstant("NC_GLOBAL"),'NumberOfRow',NumberOfRows);
+    netcdf.putAtt(trackid(n), netcdf.getConstant("NC_GLOBAL"),'GridResolution',GridResolution);
+    netcdf.putAtt(trackid(n), netcdf.getConstant("NC_GLOBAL"),'Signal',Signal);
+    netcdf.putAtt(trackid(n), netcdf.getConstant("NC_GLOBAL"),'TrackIDOrbit',TrackIDOrbit);
 
     var1=netcdf.defVar(trackid(n),'MeanObservationTime','NC_DOUBLE',dimid2);
     netcdf.putVar(trackid(n),var1,MeanObservationTime);
@@ -132,9 +144,7 @@ for  n=1:NumberOfTrack % no of trackgroups
     netcdf.putVar(trackid(n),var13,DEM_elevation);
     netcdf.putAtt(trackid(n),var13,'Description','Mean surface elevation within the grid cell');
     netcdf.putAtt(trackid(n),var13,'Units','meters');
-    var14=netcdf.defVar(trackid(n),'Signal','NC_STRING',dimid2);
-    netcdf.putVar(trackid(n),var14,Signal);
-    netcdf.putAtt(trackid(n),var14,'Description','GNSS signal and polarization used in the retrieval algorithm');
+
 
 end         % ReflectionCoefficientAtSP(Track_ID).TrackIDOrbit
 

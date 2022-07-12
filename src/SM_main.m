@@ -19,6 +19,10 @@ Elevation= dem.DEM_elevation_EASE25 ;
 Slope=dem.DEM_slope_EASE25 ;
 Rmsheight=dem.DEM_rmsheight_EASE25 ;
 Rmsslope=dem.DEM_rmsslope_EASE25 ; 
+% Elevation= DEM_elevation_EASE25 ;
+% Slope=DEM_slope_EASE25 ;
+% Rmsheight=DEM_rmsheight_EASE25 ;
+% Rmsslope=DEM_rmsslope_EASE25 ; 
 %
 % *********   Read Auxiliary files
 %
