@@ -15,10 +15,10 @@ load([Path_Auxiliary,'/Landuse/lccs_EASE25km_no190-210-220.mat']) ;
 load([Path_Auxiliary,'/CCIbiomass/agb_EASE25_mean.mat']) ; 
 load([Path_Auxiliary,'/DEM/elevation_EASEv2-25km.mat']) ;
 Biomass=agb_class_EASE25_mean ;
-Elevation= dem.DEM_elevation_EASE25 ;
-Slope=dem.DEM_slope_EASE25 ;
-Rmsheight=dem.DEM_rmsheight_EASE25 ;
-Rmsslope=dem.DEM_rmsslope_EASE25 ; 
+Elevation= DEM_elevation_EASE25 ;
+Slope=DEM_slope_EASE25 ;
+Rmsheight=DEM_rmsheight_EASE25 ;
+Rmsslope=DEM_rmsslope_EASE25 ; 
 %
 % *********   Read Auxiliary files
 %
@@ -242,9 +242,9 @@ UTCPointTime = datetime(PointTime,'ConvertFrom','datenum') ;
 % *********   Compute soil moisture
 indmodel=1 ; 
 % goodreflections=find(Map_Reflectivity_linear >0 & isnan(Map_Reflectivity_linear) ==0) ; 
-goodreflections=find((Map_Reflectivity_linear>=0.0) & (Slope<8) & ...
-    (Elevation<2500) & Rmsheight < 350) ; 
-
+% goodreflections=find((Map_Reflectivity_linear>=0.0) & (Slope<8) & ...
+%     (Elevation<2500) & Rmsheight < 350) ; 
+goodreflections=find(Map_Reflectivity_linear>=0 & Map_Reflectivity_dB >=-45);
 SM=SMretrieval(Map_Reflectivity_dB(goodreflections),Biomass(goodreflections),...
     Elevation(goodreflections), Slope(goodreflections),...
     Rmsheight(goodreflections), Rmsslope(goodreflections), indmodel) ; 
@@ -263,7 +263,8 @@ Grid_SM=Grid_SM(colmin-1: colmax+1, rowmax-1:rowmin+1) ;
 %
 % ****************   Create structure to write output L2 product
 %
-NumRetrievals=size(goodreflections) ; 
+[a b]=size(goodreflections) ;
+NumRetrievals=b ; 
 
 % Single track quantities
 OutputProduct(ii).NameTrack=NameTrack ; % NumberOfPoint
@@ -306,7 +307,7 @@ AttributeProduct.Licence='Accredited Sapienza University of Rome' ;
 AttributeProduct.Projection='EASE grid v2'  ; % reference coordinate grid 
 AttributeProduct.Processinglevel='2'  ; % processing_level 
 AttributeProduct.InitTimeOfData=char(init_SM_Day) ; % time_coverage_start 
-AttributeProduct.FinalTimeOfData=char(char(init_SM_Day+SM_Time_resolution-1)) ; % time_coverage_end 
+AttributeProduct.FinalTimeOfData=char(final_SM_Day) ; % time_coverage_end 
 AttributeProduct.DataTagUnique=char(DataTagUnique) ; % Unique tag to identify the experiment  
 AttributeProduct.num_of_days=num_of_days ; % total number of days processed  
 
@@ -320,7 +321,7 @@ AttributeProduct.Resolution=Resolution ; % Attribute: unit: 'km' description: 'S
 %
 % Outdirectory=[Path_HydroGNSS_ProcessedData '\' AttributeProduct.DataID] ;
 Outdirectory=Path_HydroGNSS_ProcessedData ;
-Outfilename=['HydroGNSS_SM_' char(init_SM_Day) '_' char(init_SM_Day+SM_Time_resolution-1) '_' AttributeProduct.Version '.nc'] ; 
+Outfilename=['HydroGNSS_SM_' char(init_SM_Day) '_' char(final_SM_Day) '_' AttributeProduct.Version '.nc'] ; 
 %
 AttributeProduct.Filename=Outfilename ; 
 %
@@ -341,7 +342,7 @@ end
 %
 warning('off') ; 
 TT=clock ; 
-if exist([Outdirectory '\' Outfilename])==2, Outdirectory=[Outdirectory '_' num2str((TT(4))) '_' num2str((TT(5))) ] ; end; 
+if exist([Outdirectory '\' Outfilename])==2, Outdirectory=[Outdirectory '\' 'SM' '_' num2str((TT(4))) '_' num2str((TT(5))) ] ; end; 
 status= mkdir(Outdirectory) ; 
 soil= WritingNetcdf(Num_records, OutputProduct,AttributeProduct, Outdirectory ) ; 
 % save([Outdirectory '\' Outfilename], 'OutputProduct')
