@@ -38,7 +38,7 @@ for jj=3:Num_sixhours+2 ;
 end
 Dir_Day=string(Dir_Day) ; 
 
-toc
+% toc
 disp('Initiate reading loop of 6-hours') ; 
 % ***************  loop on 6-hours segments within one day 
 for jj=1:Num_sixhours  ; 
@@ -63,12 +63,12 @@ for track = 1:length(trackNcids2)
         coinNcids2{track}(chan,:) = netcdf.inqGrps(channelNcids2(chan));
     end
  end
-toc
+% toc
 disp('Initiate reading loop over groups') ; 
 % loop on Groups (i.e., tracks) within each 6-hours segment 
 % Num_Groups=2 ; % WARNTING: this is to read only one group and speed up
 for kk=1:Num_Groups ; 
-toc
+% toc
 disp(['Reading Six-hour ', num2str(jj), ' of ', num2str(Num_sixhours), ' - Group/Track ', num2str(kk), ' of ', num2str(Num_Groups)]) ; 
 [a NumberOfChannels]=size(infometa.Groups(kk).Groups) ; 
 

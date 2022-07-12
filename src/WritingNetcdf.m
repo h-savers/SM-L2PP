@@ -16,6 +16,8 @@ ProjectionType=AttributeProduct.Projection;
 SM_Time_resolution=AttributeProduct.SM_Time_resolution;
 NumberOfDays=AttributeProduct.num_of_days ; % total number of days processed
 NumberOfTrack=Num_records ;
+GridResolution=AttributeProduct.Resolution ;
+
 %
 % Loop over groups corresponding to different tracks
 % For Aneesha: from now on you have to complete to write each track vector
@@ -57,14 +59,14 @@ for  n=1:NumberOfTrack % no of trackgroups
         trackid(n) = netcdf.defGrp(ncid,NameTrack);
     end
     
-    NumberOfPoint=size(OutputProduct(n).NumRetrievals);
+    NumberOfPoint=OutputProduct(n).NumRetrievals ; % Number of points in a track
     NumberOfColumns=OutputProduct.GridColumns;
     NumberOfRows=OutputProduct.Gridrows;
 
     MeanObservationTime=OutputProduct(n).PointTime;
     MeanObservationUTCTime=OutputProduct(n).UTCTime;
-    MeanObservationUTCTime=char(MeanObservationUTCTime);
-    GridResolution=repmat(AttributeProduct.Resolution,size(MeanObservationTime));
+    MeanObservationUTCTime=string(MeanObservationUTCTime);
+    % GridResolution=repmat(AttributeProduct.Resolution,size(MeanObservationTime));
     DataMeanLatitude=OutputProduct(n).SPlatitude;
     DataMeanLongitude=OutputProduct(n).SPlongitude;
     SoilMoisture=OutputProduct(n).SM;
@@ -79,7 +81,7 @@ for  n=1:NumberOfTrack % no of trackgroups
     %%dimensions
 
     dimid1 = netcdf.defDim(trackid(n),'NumberOfDays',NumberOfDays);%20
-    dimid2 = netcdf.defDim(trackid(n),'NumberOfPoint',NumberOfPoint(1));%21
+    dimid2 = netcdf.defDim(trackid(n),'NumberOfPoint',NumberOfPoint);%21
     dimid3 = netcdf.defDim(trackid(n),'NumberOfColumns',NumberOfColumns);%columns 6/1
     dimid4 = netcdf.defDim(trackid(n),'NumberOfRows',NumberOfRows); %rows 25
     dimid5=[dimid3 dimid4];
