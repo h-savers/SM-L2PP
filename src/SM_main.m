@@ -162,6 +162,7 @@ switch Signal
     IntegrationMidPointTime=[IntegrationMidPointTime;   ReflectionCoefficientAtSP(ii).time] ; 
     ReflectionHeight=[ReflectionHeight; ReflectionCoefficientAtSP(ii).ReflectionHeight] ; 
     SPIncidenceAngle=[SPIncidenceAngle; ReflectionCoefficientAtSP(ii).SPIncidenceAngle] ; 
+    NameTrack=ReflectionCoefficientAtSP(ii).Name ; 
 
     case 'E1_LHCP'
 % to be edited to accomodate time resolution > 1
@@ -172,6 +173,7 @@ switch Signal
     IntegrationMidPointTime=[IntegrationMidPointTime;   ReflectionCoefficientAtSP(ii).time] ; 
     ReflectionHeight=[ReflectionHeight; ReflectionCoefficientAtSP(ii).ReflectionHeight] ; 
     SPIncidenceAngle=[SPIncidenceAngle; ReflectionCoefficientAtSP(ii).SPIncidenceAngle] ; 
+    NameTrack=ReflectionCoefficientAtSP(ii).Name ; 
 
    case 'E1_RHCP'
 % to be edited
@@ -182,6 +184,7 @@ switch Signal
     IntegrationMidPointTime=[IntegrationMidPointTime;   ReflectionCoefficientAtSP(ii).time] ; 
     ReflectionHeight=[ReflectionHeight; ReflectionCoefficientAtSP(ii).ReflectionHeight] ; 
     SPIncidenceAngle=[SPIncidenceAngle; ReflectionCoefficientAtSP(ii).SPIncidenceAngle] ; 
+    NameTrack=ReflectionCoefficientAtSP(ii).Name ; 
 
     otherwise
     disp('Required signal not available') ;
