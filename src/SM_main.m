@@ -278,7 +278,7 @@ NumRetrievals=a ;
 OutputProduct(ii).NameTrack=NameTrack ; % NumberOfPoint
 OutputProduct(ii).NumRetrievals=NumRetrievals ; % NumberOfPoint
 OutputProduct(ii).GridColumns=colmax-colmin+3  ; 
-OutputProduct(ii).Gridrows=rowmax-rowmin+3 ; 
+OutputProduct(ii).GridRows=rowmax-rowmin+3 ; 
 % Trackwise variables 
 OutputProduct(ii).PointTime=PointTime(goodreflections) ; % Attribute: unit: 'days since 0000-01-01 00:00:00 time of observation'
 OutputProduct(ii).UTCTime=UTCPointTime(goodreflections) ; % Attribute: unit: 'UTC' description: 'time of observation'
@@ -301,7 +301,7 @@ OutputProduct(ii).Grid_SM=Grid_SM  ;
 OutputProduct(ii).Grid_SPlat=Grid_SPlat ;
 OutputProduct(ii).Grid_SPlon=Grid_SPlon ; 
 %
-% Enf for on number of track over day interval
+% End for on number of track over day interval
 %
 end
 % end for over records
@@ -334,7 +334,7 @@ Outfilename=['HydroGNSS_SM_' char(init_SM_Day) '_' char(final_SM_Day) '_' Attrib
 AttributeProduct.Filename=Outfilename ; 
 %
 % ***************  Plot output map
-if plotTag=='Yes'
+if plotTag=="Yes"
 figure, imagesc(Grid_SM')
 title(['Soil moisture map [%]'] );
 c=colorbar ; 

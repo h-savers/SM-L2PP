@@ -75,6 +75,9 @@ disp(['Reading Six-hour ', num2str(jj), ' of ', num2str(Num_sixhours), ' - Group
 if NumberOfChannels > 0   
 % Case of HydroGNSS with several channels. Read specular point data   
 Track_ID=Track_ID+1 ; 
+% [c d]=size(num2str(Track_ID)) ; 
+% groupname='000000'; groupname(6-d+1:end)=num2str(Track_ID) ;
+% ReflectionCoefficientAtSP(Track_ID).Name= groupname ; 
 ReflectionCoefficientAtSP(Track_ID).Name=['Track n. ', num2str(Track_ID)] ; 
 ReflectionCoefficientAtSP(Track_ID).PRN=infometa.Groups(kk).Attributes(9).Value  ; 
 ReflectionCoefficientAtSP(Track_ID).TrackIDOrbit=infometa.Groups(kk).Attributes(2).Value  ; 

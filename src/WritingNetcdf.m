@@ -50,7 +50,11 @@ netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'L2_ProcessorCreator',L2_Pro
 netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'FirstTimeStamp',FirstTimeStamp);
 netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'LastTimeStamp',LastTimeStamp);
 netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'ProjectionType',ProjectionType);
+netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'GridResolution',GridResolution);
 netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'TimeResolution',SM_Time_resolution);
+dimid1 = netcdf.defDim(ncid,'NumberOfDays',NumberOfDays);%20
+dimid6 = netcdf.defDim(ncid,'NumberOfTracks',Num_records);%20
+
 % netcdf.putAtt(ncid, netcdf.getConstant("NC_GLOBAL"),'NumberOfDays',NumberOfDays);
 
 %     TrackID=size(OutputProduct.NameTrack);
@@ -61,8 +65,8 @@ for  n=1:NumberOfTrack % no of trackgroups
     end
     
     NumberOfPoint=OutputProduct(n).NumRetrievals ; % Number of points in a track
-    NumberOfColumns=OutputProduct.GridColumns;
-    NumberOfRows=OutputProduct.Gridrows;
+    NumberOfColumns=OutputProduct(n).GridColumns;
+    NumberOfRows=OutputProduct(n).GridRows;
 
     MeanObservationTime=OutputProduct(n).PointTime;
     MeanObservationUTCTime=OutputProduct(n).UTCTime;
@@ -82,21 +86,19 @@ for  n=1:NumberOfTrack % no of trackgroups
     TrackIDOrbit=OutputProduct(n).TrackIDOrbit;
     %%dimensions
 
-    dimid1 = netcdf.defDim(trackid(n),'NumberOfDays',NumberOfDays);%20
     dimid2 = netcdf.defDim(trackid(n),'NumberOfPoint',NumberOfPoint);%21
     dimid3 = netcdf.defDim(trackid(n),'NumberOfColumns',NumberOfColumns);%columns 6/1
     dimid4 = netcdf.defDim(trackid(n),'NumberOfRows',NumberOfRows); %rows 25
-    dimid5=[dimid3 dimid4];
+    dimid5=([dimid3 dimid4]);
     %%variables
 
 
 
 
     netcdf.putAtt(trackid(n), netcdf.getConstant("NC_GLOBAL"),'TrackName',NameTrack);
-    netcdf.putAtt(trackid(n), netcdf.getConstant("NC_GLOBAL"),'NumberOfPoint',NumberOfPoint);
-    netcdf.putAtt(trackid(n), netcdf.getConstant("NC_GLOBAL"),'NumberOfColumns',NumberOfColumns);
-    netcdf.putAtt(trackid(n), netcdf.getConstant("NC_GLOBAL"),'NumberOfRow',NumberOfRows);
-    netcdf.putAtt(trackid(n), netcdf.getConstant("NC_GLOBAL"),'GridResolution',GridResolution);
+%     netcdf.putAtt(trackid(n), netcdf.getConstant("NC_GLOBAL"),'NumberOfPoint',NumberOfPoint);
+%     netcdf.putAtt(trackid(n), netcdf.getConstant("NC_GLOBAL"),'NumberOfColumns',NumberOfColumns);
+%     netcdf.putAtt(trackid(n), netcdf.getConstant("NC_GLOBAL"),'NumberOfRow',NumberOfRows);
     netcdf.putAtt(trackid(n), netcdf.getConstant("NC_GLOBAL"),'Signal',Signal);
     netcdf.putAtt(trackid(n), netcdf.getConstant("NC_GLOBAL"),'TrackIDOrbit',TrackIDOrbit);
 
@@ -106,9 +108,6 @@ for  n=1:NumberOfTrack % no of trackgroups
     var2=netcdf.defVar(trackid(n),'MeanObservationUTCTime','NC_STRING',dimid2);
     netcdf.putVar(trackid(n),var2,MeanObservationUTCTime);
     netcdf.putAtt(trackid(n),var2,'Description','The mean UTC timestamp of the reflections averaged over the grid cell');
-    var3=netcdf.defVar(trackid(n),'GridResolution','NC_DOUBLE',dimid2);
-    netcdf.putVar(trackid(n),var3,GridResolution);
-    netcdf.putAtt(trackid(n),var3,'Description','The resolution of the grid cell where the reflections are averaged');
     var4=netcdf.defVar(trackid(n),'DataMeanLatitude','NC_DOUBLE',dimid2);
     netcdf.putVar(trackid(n),var4,DataMeanLatitude);
     netcdf.putAtt(trackid(n),var4,'Description','Mean latitude of the reflection specular points aggregated within the grid cell');
@@ -133,9 +132,9 @@ for  n=1:NumberOfTrack % no of trackgroups
     var10=netcdf.defVar(trackid(n),'QualityFlag','NC_DOUBLE',dimid2);
     netcdf.putVar(trackid(n),var10,QualityFlag);
     netcdf.putAtt(trackid(n),var10,'Description','Quality Flags');
-    var11=netcdf.defVar(trackid(n),'MAP_Reflectivity','NC_DOUBLE',dimid2);
+    var11=netcdf.defVar(trackid(n),'Reflectivity_dB','NC_DOUBLE',dimid2);
     netcdf.putVar(trackid(n),var11,MAP_Reflectivity);
-    netcdf.putAtt(trackid(n),var11,'Description','Mean L1B reflectivity of the reflection specular points aggregated within the grid cell');
+    netcdf.putAtt(trackid(n),var11,'Description','Mean L1B reflectivity of the reflection specular points aggregated within the grid cell in dB');
     var12=netcdf.defVar(trackid(n),'AboveGroundBiomass','NC_DOUBLE',dimid2);
     netcdf.putVar(trackid(n),var12,AboveGroundBiomass);
     netcdf.putAtt(trackid(n),var12,'Description','Above ground biomass from the CCI product averaged within the grid cell');

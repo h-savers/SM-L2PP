@@ -8,8 +8,8 @@ function SML2PP_start(mode, Path_PDGS_NAS_folder, ...
 % clear all
 % close all
 %
-% Abilitate final plot of the map (to be eventually transferred to the GUI 
-plotTag='Yes' ; 
+% Abilitate final plot of the map (to be eventually transferred to the GUI plotTag
+plotTag="No" ; 
 % a=1 ; 
 if exist('mode')==0  | exist('mode')==2
     disp('ERROR: INPUT ARGUMENTS MISSING. Program exiting') ; 
@@ -40,20 +40,27 @@ if isfolder(Path_PDGS_NAS_folder) ==0
 end
 
 load('../conf/Configuration2.mat') ;
-  init_SM_Day=datetime((startdate));
+
   SM_Time_resolution=str2num(SM_Time_resolution) ; 
   %% ????  SM_Time_resolution=days(enddate-startdate)+1 ;
   Resolution=str2num(Resolution) ; 
+  init_SM_Day=datetime(startdate) ;
+  final_SM_Day=datetime(enddate) ;
 %
 % *************  Run the main program
 %
-Path_HydroGNSS_Data=[Path_PDGS_NAS_folder '\' 'DataRelease\L1A_L1B'];
-Path_HydroGNSS_ProcessedData=[Path_PDGS_NAS_folder '\' 'DataRelease\L2OP-SSM'];
-Path_Auxiliary=[Path_PDGS_NAS_folder '\' 'Auxiliar_Data\L2OP-SSM'];
+Path_HydroGNSS_Data=[Path_PDGS_NAS_folder '/' 'DataRelease/L1A_L1B'];
+Path_HydroGNSS_ProcessedData=[Path_PDGS_NAS_folder '/' 'DataRelease/L2OP-SSM'];
+Path_Auxiliary=[Path_PDGS_NAS_folder '/' 'Auxiliary_Data/L2OP-SSM'];
 %
-SM_main(init_SM_Day,SM_Time_resolution, Path_HydroGNSS_Data,Path_Auxiliary,...
+% SM_main(init_SM_Day,SM_Time_resolution, Path_HydroGNSS_Data,Path_Auxiliary,...
+%      Path_HydroGNSS_ProcessedData,Resolution, metadata_name, DDMs_name, ...
+%      readDDM, Frequency, Polarization, plotTag)
+
+SM_main(init_SM_Day,final_SM_Day, SM_Time_resolution, Path_HydroGNSS_Data,Path_Auxiliary,...
      Path_HydroGNSS_ProcessedData,Resolution, metadata_name, DDMs_name, ...
-     readDDM, Frequency, Polarization, plotTag)
+     readDDM, Frequency, Polarization, plotTag) ; 
+
 %
 % *************  Run the main program
 %
