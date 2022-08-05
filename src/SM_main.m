@@ -353,7 +353,7 @@ end
 %
 warning('off') ; 
 TT=clock ; 
-if exist([Outdirectory '\' Outfilename])==2, Outdirectory=[Outdirectory '\' 'SM' '_' num2str((TT(4))) '_' num2str((TT(5))) ] ; end; 
+if exist([Outdirectory '/' Outfilename])==2, Outdirectory=[Outdirectory '/' 'SM' '_' num2str((TT(4))) '_' num2str((TT(5))) ] ; end; 
 status= mkdir(Outdirectory) ; 
 soil= WritingNetcdf(Num_records, OutputProduct,AttributeProduct, Outdirectory ) ; 
 % save([Outdirectory '\' Outfilename], 'OutputProduct')
